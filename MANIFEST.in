@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include agrinext *.css
+recursive-include agrinext *.csv
+recursive-include agrinext *.html
+recursive-include agrinext *.ico
+recursive-include agrinext *.js
+recursive-include agrinext *.json
+recursive-include agrinext *.md
+recursive-include agrinext *.png
+recursive-include agrinext *.py
+recursive-include agrinext *.svg
+recursive-include agrinext *.txt
+recursive-exclude agrinext *.pyc
