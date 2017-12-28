@@ -8,4 +8,4 @@ from frappe.model.document import Document
 
 class Item(Document):
 	def autoname(self):
-		self.name = self.item
+		self.name = self.item_name
