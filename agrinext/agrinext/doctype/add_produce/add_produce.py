@@ -18,7 +18,9 @@ class AddProduce(Document):
 		period = frappe.db.get_value('Item', self.item, "post_harvest_period")
 		self.expire_on = add_to_date(get_datetime(self.produced_date), months=period).strftime("%Y-%m-%d")
 
+@frappe.whitelist()
 def disable_expired_produce():
+	''' scheduler to auto-disable ads that have expired'''
 	today = getdate(nowdate())
 	frappe.db.sql("""Update `tabAdd Produce`
 		set
@@ -26,3 +28,10 @@ def disable_expired_produce():
 		where
 			expire_on < '{0}'
 	""".format(today))
+
+@frappe.whitelist()
+def market_list():
+	''' return listing of posted ads that aren't sold or expired'''
+	out = frappe.db.sql("""select * from `tabAdd Produce` where disable!=1 """, as_dict=True)
+
+	return out
