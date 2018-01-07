@@ -6,6 +6,10 @@ from frappe.utils import cint
 
 @frappe.whitelist(allow_guest=True)
 def get(mobile_no=None):
+	def generate_otp():
+		otp = ''.join(["{}".format(random.randint(0, 9)) for i in range(0, otp_length)])
+		return {"id": key, "otp": otp, "timestamp": str(frappe.utils.get_datetime().utcnow())}
+
 	if not mobile_no:
 		frappe.throw("NOMOBILE", exc=LookupError)
 
@@ -16,10 +20,13 @@ def get(mobile_no=None):
 
 	key = mobile_no + "_otp"	
 	otp_length = 6 # 6 digit OTP
-	otp = ''.join(["{}".format(random.randint(0, 9)) for i in range(0, otp_length)])
-	otp_json = {"id": key, "otp": otp, "timestamp": str(frappe.utils.get_datetime().utcnow())}
 	rs = frappe.cache()
-	rs.set_value(key, json.dumps(otp_json))
+
+	if rs.get_value(key) and otp_not_expired(rs.get_value(key)): # check if an otp is already being generated
+		otp_json = rs.get_value(key)
+	else:
+		otp_json = generate_otp()
+		rs.set_value(key, otp_json)
 
 	"""
 	FIRE SMS FOR OTP
@@ -46,15 +53,12 @@ def authenticate(otp=None, mobile_no=None, client_id=None):
 			frappe.throw("NOCLIENTID")
 
 	rs = frappe.cache()
-	stored_otp = rs.get_value("{0}_otp".format(mobile_no))
-	otp_json = json.loads(stored_otp)
+	otp_json = rs.get_value("{0}_otp".format(mobile_no))
 
 	if otp_json.get("otp") != otp:
 		frappe.throw("OTPNOTFOUND")
 
-	diff = frappe.utils.get_datetime().utcnow() - frappe.utils.get_datetime(otp_json.get("timestamp"))
-
-	if int(diff.seconds) / 60 >= 10:
+	if not otp_not_expired(otp_json):
 		frappe.throw("OTPEXPIRED")
 
 	otoken = create_bearer_token(mobile_no, client_id)
@@ -84,3 +88,11 @@ def create_bearer_token(mobile_no, client_id):
 	frappe.db.commit()
 
 	return otoken
+
+def otp_not_expired(otp_json):
+	flag = True
+	diff = frappe.utils.get_datetime().utcnow() - frappe.utils.get_datetime(otp_json.get("timestamp"))
+	if int(diff.seconds) / 60 >= 10:
+		flag = False
+
+	return flag
