@@ -2,7 +2,7 @@
 import frappe
 import json
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def report_error():
 	if(frappe.get_request_header("X-API-KEY") == "420"):
 		note = frappe.new_doc("Note")
