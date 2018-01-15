@@ -1,7 +1,7 @@
-// Copyright (c) 2017, Frappé and contributors
+// Copyright (c) 2018, Frappé and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Add Produce', {
+frappe.ui.form.on('Produce', {
 	refresh: function(frm) {
 
 	}

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2017, Frappé and Contributors
+# Copyright (c) 2018, Frappé and Contributors
 # See license.txt
 from __future__ import unicode_literals
 
 import frappe
 import unittest
 
-class TestAddProduce(unittest.TestCase):
+class TestProduce(unittest.TestCase):
 	pass
