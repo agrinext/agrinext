@@ -1,14 +1,21 @@
 # see license
 import frappe
 import json
+from frappe import _
 
 @frappe.whitelist(allow_guest=True)
 def report_error():
-	note = frappe.new_doc("Note")
-	note.title = unicode(frappe.utils.datetime.datetime.today())
-	note.public = 1
-	note.content = unicode(frappe.form_dict)
-	if frappe.session.user == "Guest" and frappe.get_request_header("X-API-KEY") == "420":
-		note.save(ignore_permissions=True)
-	else:
-		note.save()
+	api_access_key = frappe.get_value("AgriNext Settings", None, "guest_access_api_key")
+	if frappe.session.user == "Guest":
+		if frappe.get_request_header("X-API-KEY") != api_access_key:
+			raise frappe.PermissionError
+
+	error_log = frappe.new_doc("Error Log")
+	error_log.method = "App Error " + unicode(frappe.utils.datetime.datetime.today())
+	error_log.content = unicode(frappe.form_dict)
+	error_log.save(ignore_permissions=True)
+	return error_log.as_dict()
+
+@frappe.whitelist()
+def get_meta(doctype):
+	return frappe.get_meta(doctype)
