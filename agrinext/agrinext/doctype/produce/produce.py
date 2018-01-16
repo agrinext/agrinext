@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2017, Frappé and contributors
+# Copyright (c) 2018, Frappé and contributors
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
@@ -7,7 +7,7 @@ import frappe
 from frappe.utils import get_datetime, add_to_date, getdate, nowdate
 from frappe.model.document import Document
 
-class AddProduce(Document):
+class Produce(Document):
 	def autoname(self):
 		self.name = self.produce_name
 
