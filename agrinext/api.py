@@ -12,7 +12,7 @@ def report_error():
 
 	error_log = frappe.new_doc("Error Log")
 	error_log.method = "App Error " + unicode(frappe.utils.datetime.datetime.today())
-	error_log.content = unicode(frappe.form_dict)
+	error_log.error = unicode(frappe.form_dict)
 	error_log.save(ignore_permissions=True)
 	return error_log.as_dict()
 
