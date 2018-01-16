@@ -11,7 +11,9 @@ def get(mobile_no=None):
 		return {"id": key, "otp": otp, "timestamp": str(frappe.utils.get_datetime().utcnow())}
 
 	if not mobile_no:
-		frappe.throw("NOMOBILE", exc=LookupError)
+		mobile_no = frappe.form_dict.get("mobile_no")
+		if not mobile_no:
+			frappe.throw("NOMOBILE", exc=LookupError)
 
 	u = frappe.db.get_value("User", {"mobile_no": mobile_no}, "name")
 
