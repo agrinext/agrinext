@@ -7,4 +7,5 @@ import frappe
 from frappe.model.document import Document
 
 class UserProfile(Document):
-	pass
+	def autoname(self):
+		self.name = self.mobile_no
